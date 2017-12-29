@@ -14,6 +14,7 @@ main()
   printf("%d\n", getRank(2, 2, arr));
   getDifference(2, 2, arr, brr, crr);
   getProduct(2, 2, arr, 2, 2, brr);
+  getREF(2, 2, arr);
   printMatrix(2, 2, crr);
 }
 
@@ -29,8 +30,8 @@ int getRank(size_t rows, size_t cols, int matrix[rows][cols])
       {
         rank++;
         break;
-      }
     }
+      }
   }
 
   return rank;
@@ -90,7 +91,45 @@ void getDifference(size_t rows, size_t cols, int matrix[rows][cols], int matrix2
 
 void getREF(size_t rows, size_t cols, int matrix[rows][cols])
 {
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+        {
+            if(matrix[i][j] == 0) //if pivot is 0
+            {   
+                for(int m = i + 1; m < rows; m++) //look for new pivot
+                {
+                    if(matrix[m][j] != 0) //new pivot found
+                    {
+                      swap(rows, cols, matrix, i, m);
+                      break;
+                    }
+                }
+            }
 
+            int pivot = matrix[i][j]; //select pivot
+
+            for(int k = j + 1; k < cols; k++) //divide entire row by pivot
+            {
+              matrix[i][k] /= pivot;
+            }
+
+            /**
+             * Set entire column to zero except for the pivot
+             */
+            for(int t = i + 1; t < rows; t++)
+            {
+              int elim = matrix[t][j] / matrix[i][j];
+              for(int s = j; s < cols; s++)
+              {
+                matrix[t][s] -= matrix[i][s] * elim;
+              }
+
+            }
+        }
+        printMatrix(rows, cols, matrix);
+    }
+    
 }
 
 /**
@@ -102,7 +141,17 @@ void getREF(size_t rows, size_t cols, int matrix[rows][cols])
  *  //multiply that by 1/determinant
  * }
   */
-  
+
+void swap(size_t rows, size_t cols, int matrix[rows][cols], int a, int b)
+{
+    for(int j = 0; j < cols; j++)
+    {
+      int temp = matrix[a][j];
+      matrix[b][j] = matrix[a][j];
+      matrix[a][j] = temp;
+    }
+}
+
 /**
  * Helper function to print a matrix.
  */
